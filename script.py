@@ -23,6 +23,9 @@ LOOP_SEC = int(config['target']['LOOP_SEC'])
 # MAX or number
 TARGET_LOT = config['target']['LOT']
 
+# at least buy X amount of lot in single purchase
+MIN_LOT = int(config['target']['MIN_LOT'])
+
 client = Client(API_KEY, API_SECRET)
 
 # lending endpoint is not implemented in the package,
@@ -72,21 +75,30 @@ while(True):
                     balance_lot = free_balance / int(lotSize)
                     balance_lot = math.floor(balance_lot)
                     print(datetime.now(), 'purchase_availability', purchase_availability)
-                    if purchase_availability < balance_lot:
+                    # if purchase_availability > balance_lot:
 
-                        print("Purchase it!")
+
+                    if balance_lot < MIN_LOT:
+                        continue
+
+                    if purchase_availability > balance_lot:
 
                         if TARGET_LOT == 'MAX':
                             lot = balance_lot
                         else:
-                            lot = TARGET_LOT
-                        params = {
-                            'projectId': projectId,
-                            'lot': lot,
-                            'timestamp': time.time()
-                        }
-                        purchase = client._post("lending/customizedFixed/purchase",
-                                    True, client.PUBLIC_API_VERSION, data=params)
+                            lot = int(TARGET_LOT)
+                    else:
+                        lot = purchase_availability
+
+                    params = {
+                        'projectId': projectId,
+                        'lot': lot,
+                        'timestamp': time.time()
+                    }
+
+                    print("Purchase it!")
+                    purchase = client._post("lending/customizedFixed/purchase",
+                                True, client.PUBLIC_API_VERSION, data=params)
     time.sleep(LOOP_SEC)
 
 
