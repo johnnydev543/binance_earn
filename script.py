@@ -1,11 +1,9 @@
 import time
-from datetime import datetime
 import os
-from binance.client import Client
 import configparser
-import requests
-import json
 import math
+from datetime import datetime
+from binance.client import Client
 
 # reads the configuration from settings file
 config = configparser.ConfigParser()
@@ -20,6 +18,7 @@ API_KEY = config['api']['API_KEY']
 API_SECRET = config['api']['API_SECRET']
 TARGET_COIN = config['target']['COIN']
 TARGET_DURATION = config['target']['DURATION']
+LOOP_SEC = config['target']['LOOP_SEC']
 
 client = Client(API_KEY, API_SECRET)
 
@@ -79,6 +78,6 @@ while(True):
                         }
                         purchase = client._post("lending/customizedFixed/purchase",
                                     True, client.PUBLIC_API_VERSION, data=params)
-    time.sleep(10)
+    time.sleep(int(LOOP_SEC))
 
 
