@@ -28,54 +28,57 @@ client = Client(API_KEY, API_SECRET)
 client.API_URL = 'https://api.binance.com/sapi'
 client.PRIVATE_API_VERSION = "v1"
 
-params = {
-    'timestamp': time.time()
-}
+while(True):
 
-capital = client._get("capital/config/getall",
-                        True, client.PUBLIC_API_VERSION, data=params)
+    params = {
+        'timestamp': time.time()
+    }
 
-for coin in capital:
-    free = coin.get('free', None)
-    coin = coin.get('coin', None)
-    free_balance = float(free)
-    if free_balance > 0 and coin == TARGET_COIN :
-        print(TARGET_COIN, free_balance)
+    capital = client._get("capital/config/getall",
+                            True, client.PUBLIC_API_VERSION, data=params)
 
-        params = {
-            'type': 'CUSTOMIZED_FIXED',
-            'timestamp': time.time()
-        }
+    for coin in capital:
+        free = coin.get('free', None)
+        coin = coin.get('coin', None)
+        free_balance = float(free)
+        if free_balance > 0 and coin == TARGET_COIN :
+            print(TARGET_COIN, free_balance)
 
-        projects = client._get("lending/project/list",
-                                True, client.PUBLIC_API_VERSION, data=params)
+            params = {
+                'type': 'CUSTOMIZED_FIXED',
+                'timestamp': time.time()
+            }
 
-        for project in projects:
-            status = project.get('status', None)
-            asset = project.get('asset', None)
-            duration = project.get('duration', None)
-            lotSize = project.get('lotSize', None)
+            projects = client._get("lending/project/list",
+                                    True, client.PUBLIC_API_VERSION, data=params)
 
-            if asset == TARGET_COIN and status == 'PURCHASING' and int(duration) == int(TARGET_DURATION):
-                lotsPurchased = project.get('lotsPurchased', None)
-                lotsUpLimit = project.get('lotsUpLimit', None)
-                maxLotsPerUser = project.get('maxLotsPerUser', None)
-                projectId = project.get('projectId', None)
+            for project in projects:
+                status = project.get('status', None)
+                asset = project.get('asset', None)
+                duration = project.get('duration', None)
+                lotSize = project.get('lotSize', None)
 
-                print(duration, lotsPurchased, lotsUpLimit, maxLotsPerUser, projectId)
+                if asset == TARGET_COIN and status == 'PURCHASING' and int(duration) == int(TARGET_DURATION):
+                    lotsPurchased = project.get('lotsPurchased', None)
+                    lotsUpLimit = project.get('lotsUpLimit', None)
+                    maxLotsPerUser = project.get('maxLotsPerUser', None)
+                    projectId = project.get('projectId', None)
 
-                purchase_availability = lotsUpLimit - lotsPurchased
-                balance_lot = free_balance / int(lotSize)
-                balance_lot = math.floor(balance_lot)
-                print(datetime.now(), 'purchase_availability', purchase_availability)
-                if purchase_availability > balance_lot:
-                    print("Purchase it!")
-                    params = {
-                        'projectId': projectId,
-                        'lot': balance_lot,
-                        'timestamp': time.time()
-                    }
-                    purchase = client._post("lending/customizedFixed/purchase",
-                                True, client.PUBLIC_API_VERSION, data=params)
+                    print(duration, lotsPurchased, lotsUpLimit, maxLotsPerUser, projectId)
+
+                    purchase_availability = lotsUpLimit - lotsPurchased
+                    balance_lot = free_balance / int(lotSize)
+                    balance_lot = math.floor(balance_lot)
+                    print(datetime.now(), 'purchase_availability', purchase_availability)
+                    if purchase_availability > balance_lot:
+                        print("Purchase it!")
+                        params = {
+                            'projectId': projectId,
+                            'lot': balance_lot,
+                            'timestamp': time.time()
+                        }
+                        purchase = client._post("lending/customizedFixed/purchase",
+                                    True, client.PUBLIC_API_VERSION, data=params)
+    time.sleep(10)
 
 
