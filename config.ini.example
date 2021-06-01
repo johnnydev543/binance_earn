@@ -1,5 +1,9 @@
 # Binance API Label: input_binance_label_here
 
+[general]
+# loop seconds, excute script every X seconds
+LOOP_SEC = 60
+
 [api]
 API_KEY = 
 API_SECRET = 
@@ -9,9 +13,6 @@ COIN = USDT
 
 # days
 DURATION = 90
-
-# seconds
-LOOP_SEC = 60
 
 # MAX or number
 LOT = MAX

@@ -18,7 +18,6 @@ API_KEY = config['api']['API_KEY']
 API_SECRET = config['api']['API_SECRET']
 TARGET_COIN = config['target']['COIN']
 TARGET_DURATION = int(config['target']['DURATION'])
-LOOP_SEC = int(config['target']['LOOP_SEC'])
 
 # MAX or number
 TARGET_LOT = config['target']['LOT']
@@ -26,31 +25,21 @@ TARGET_LOT = config['target']['LOT']
 # at least buy X amount of lot in single purchase
 MIN_LOT = int(config['target']['MIN_LOT'])
 
-client_api = Client(API_KEY, API_SECRET)
-
-# lending endpoint is not implemented in the package,
-# so we need to force it to use the url and version we want
+LOOP_SEC = int(config['general']['LOOP_SEC'])
 client = Client(API_KEY, API_SECRET)
-client.API_URL = 'https://api.binance.com/sapi'
-client.PRIVATE_API_VERSION = "v1"
 
 while(True):
 
-    asset_balance = client_api.get_asset_balance(asset=TARGET_COIN)
+    asset_balance = client.get_asset_balance(asset=TARGET_COIN)
 
     free = asset_balance.get('free', None)
     free_balance = float(free)
 
     if free_balance > 0:
+        print(datetime.now())
         print(TARGET_COIN, free_balance)
 
-        params = {
-            'type': 'CUSTOMIZED_FIXED',
-            'timestamp': time.time()
-        }
-
-        projects = client._get("lending/project/list",
-                                True, client.PUBLIC_API_VERSION, data=params)
+        projects = client.get_fixed_activity_project_list(type='CUSTOMIZED_FIXED', timestamp=time.time())
 
         for project in projects:
             status = project.get('status', None)
@@ -69,9 +58,7 @@ while(True):
                 purchase_availability = lotsUpLimit - lotsPurchased
                 balance_lot = free_balance / int(lotSize)
                 balance_lot = math.floor(balance_lot)
-                print(datetime.now(), 'purchase_availability', purchase_availability)
-                # if purchase_availability > balance_lot:
-
+                print('purchase_availability', purchase_availability, 'balance_lot', balance_lot)
 
                 if balance_lot < MIN_LOT:
                     continue
@@ -95,5 +82,3 @@ while(True):
                 purchase = client._post("lending/customizedFixed/purchase",
                             True, client.PUBLIC_API_VERSION, data=params)
     time.sleep(LOOP_SEC)
-
-
