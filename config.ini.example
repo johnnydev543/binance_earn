@@ -1,3 +1,17 @@
+# Binance API Label: input_binance_label_here
+
 [api]
 API_KEY = 
 API_SECRET = 
+
+[target]
+COIN = USDT
+
+# days
+DURATION = 90
+
+# seconds
+LOOP_SEC = 60
+
+# MAX or number
+LOT = MAX
