@@ -17,8 +17,11 @@ except:
 API_KEY = config['api']['API_KEY']
 API_SECRET = config['api']['API_SECRET']
 TARGET_COIN = config['target']['COIN']
-TARGET_DURATION = config['target']['DURATION']
-LOOP_SEC = config['target']['LOOP_SEC']
+TARGET_DURATION = int(config['target']['DURATION'])
+LOOP_SEC = int(config['target']['LOOP_SEC'])
+
+# MAX or number
+TARGET_LOT = config['target']['LOT']
 
 client = Client(API_KEY, API_SECRET)
 
@@ -57,7 +60,7 @@ while(True):
                 duration = project.get('duration', None)
                 lotSize = project.get('lotSize', None)
 
-                if asset == TARGET_COIN and status == 'PURCHASING' and int(duration) == int(TARGET_DURATION):
+                if asset == TARGET_COIN and status == 'PURCHASING' and int(duration) == TARGET_DURATION:
                     lotsPurchased = project.get('lotsPurchased', None)
                     lotsUpLimit = project.get('lotsUpLimit', None)
                     maxLotsPerUser = project.get('maxLotsPerUser', None)
@@ -69,15 +72,21 @@ while(True):
                     balance_lot = free_balance / int(lotSize)
                     balance_lot = math.floor(balance_lot)
                     print(datetime.now(), 'purchase_availability', purchase_availability)
-                    if purchase_availability > balance_lot:
+                    if purchase_availability < balance_lot:
+
                         print("Purchase it!")
+
+                        if TARGET_LOT == 'MAX':
+                            lot = balance_lot
+                        else:
+                            lot = TARGET_LOT
                         params = {
                             'projectId': projectId,
-                            'lot': balance_lot,
+                            'lot': lot,
                             'timestamp': time.time()
                         }
                         purchase = client._post("lending/customizedFixed/purchase",
                                     True, client.PUBLIC_API_VERSION, data=params)
-    time.sleep(int(LOOP_SEC))
+    time.sleep(LOOP_SEC)
 
 
