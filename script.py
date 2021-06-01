@@ -1,8 +1,11 @@
-import time, os
+import time
+from datetime import datetime
+import os
 from binance.client import Client
 import configparser
 import requests
 import json
+import math
 
 # reads the configuration from settings file
 config = configparser.ConfigParser()
@@ -51,13 +54,28 @@ for coin in capital:
             status = project.get('status', None)
             asset = project.get('asset', None)
             duration = project.get('duration', None)
+            lotSize = project.get('lotSize', None)
 
             if asset == TARGET_COIN and status == 'PURCHASING' and int(duration) == int(TARGET_DURATION):
                 lotsPurchased = project.get('lotsPurchased', None)
                 lotsUpLimit = project.get('lotsUpLimit', None)
                 maxLotsPerUser = project.get('maxLotsPerUser', None)
                 projectId = project.get('projectId', None)
+
                 print(duration, lotsPurchased, lotsUpLimit, maxLotsPerUser, projectId)
+
                 purchase_availability = lotsUpLimit - lotsPurchased
-                print('purchase_availability', purchase_availability)
+                balance_lot = free_balance / int(lotSize)
+                balance_lot = math.floor(balance_lot)
+                print(datetime.now(), 'purchase_availability', purchase_availability)
+                if purchase_availability > balance_lot:
+                    print("Purchase it!")
+                    params = {
+                        'projectId': projectId,
+                        'lot': balance_lot,
+                        'timestamp': time.time()
+                    }
+                    purchase = client._post("lending/customizedFixed/purchase",
+                                True, client.PUBLIC_API_VERSION, data=params)
+
 
