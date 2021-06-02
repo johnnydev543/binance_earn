@@ -60,25 +60,28 @@ while(True):
                 balance_lot = math.floor(balance_lot)
                 print('purchase_availability', purchase_availability, 'balance_lot', balance_lot)
 
-                if balance_lot < MIN_LOT:
-                    continue
+                if purchase_availability > 0:
 
-                if purchase_availability > balance_lot:
+                    if balance_lot < MIN_LOT or purchase_availability < MIN_LOT:
+                        continue
 
-                    if TARGET_LOT == 'MAX':
-                        lot = balance_lot
+                    if purchase_availability > balance_lot:
+
+                        if TARGET_LOT == 'MAX':
+                            lot = balance_lot
+                        else:
+                            lot = int(TARGET_LOT)
                     else:
-                        lot = int(TARGET_LOT)
-                else:
-                    lot = purchase_availability
+                        lot = purchase_availability
 
-                params = {
-                    'projectId': projectId,
-                    'lot': lot,
-                    'timestamp': time.time()
-                }
-
-                print("Purchase it!")
-                purchase = client._post("lending/customizedFixed/purchase",
-                            True, client.PUBLIC_API_VERSION, data=params)
+                    params = {
+                        'projectId': projectId,
+                        'lot': lot,
+                        'timestamp': time.time()
+                    }
+        
+                    print("Purchase it!")
+                    purchase = client._request_margin_api('post', 'lending/customizedFixed/purchase',
+                                        True, data=params)
+                                
     time.sleep(LOOP_SEC)
