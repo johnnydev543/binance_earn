@@ -39,7 +39,11 @@ while(True):
         print(datetime.now())
         print(TARGET_COIN, free_balance)
 
-        projects = client.get_fixed_activity_project_list(type='CUSTOMIZED_FIXED', timestamp=time.time())
+        projects = client.get_fixed_activity_project_list(
+                            type='CUSTOMIZED_FIXED',
+                            status='SUBSCRIBABLE',
+                            timestamp=time.time()
+                            )
 
         for project in projects:
             status = project.get('status', None)
