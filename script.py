@@ -36,8 +36,7 @@ while(True):
     free_balance = float(free)
 
     if free_balance > 0:
-        print(datetime.now())
-        print(TARGET_COIN, free_balance)
+        print(datetime.now(), '|', TARGET_COIN, free_balance)
 
         projects = client.get_fixed_activity_project_list(
                             type='CUSTOMIZED_FIXED',
@@ -83,9 +82,9 @@ while(True):
                         'lot': lot,
                         'timestamp': time.time()
                     }
-        
+
                     print("Purchase it!")
                     purchase = client._request_margin_api('post', 'lending/customizedFixed/purchase',
                                         True, data=params)
-                                
+
     time.sleep(LOOP_SEC)
