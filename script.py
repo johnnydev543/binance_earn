@@ -61,7 +61,7 @@ while(True):
                 purchase_availability = lotsUpLimit - lotsPurchased
                 balance_lot = free_balance / int(lotSize)
                 balance_lot = math.floor(balance_lot)
-                print('purchase_availability', purchase_availability, 'balance_lot', balance_lot)
+                print('purchase_availability', purchase_availability, 'balance_lot', balance_lot, 'KEEP_LOT', KEEP_LOT)
 
                 if purchase_availability > 0 and balance_lot > KEEP_LOT:
 
