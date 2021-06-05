@@ -14,8 +14,9 @@ COIN = USDT
 # days
 DURATION = 90
 
-# MAX or number
-LOT = MAX
+# The least amount of lot you want to keep in your wallet.
+# 0 for spending the maximum balance.
+KEEP_LOT = 0
 
 # at least buy X amount of lot in single purchase
 MIN_LOT = 10

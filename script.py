@@ -20,7 +20,7 @@ TARGET_COIN = config['target']['COIN']
 TARGET_DURATION = int(config['target']['DURATION'])
 
 # MAX or number
-TARGET_LOT = config['target']['LOT']
+KEEP_LOT = int(config['target']['KEEP_LOT'])
 
 # at least buy X amount of lot in single purchase
 MIN_LOT = int(config['target']['MIN_LOT'])
@@ -63,17 +63,13 @@ while(True):
                 balance_lot = math.floor(balance_lot)
                 print('purchase_availability', purchase_availability, 'balance_lot', balance_lot)
 
-                if purchase_availability > 0:
+                if purchase_availability > 0 and balance_lot > KEEP_LOT:
 
                     if balance_lot < MIN_LOT or purchase_availability < MIN_LOT:
                         continue
 
                     if purchase_availability > balance_lot:
-
-                        if TARGET_LOT == 'MAX':
-                            lot = balance_lot
-                        else:
-                            lot = int(TARGET_LOT)
+                        lot = balance_lot - KEEP_LOT
                     else:
                         lot = purchase_availability
 
