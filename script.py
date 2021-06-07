@@ -28,6 +28,13 @@ MIN_LOT = int(config['target']['MIN_LOT'])
 LOOP_SEC = int(config['general']['LOOP_SEC'])
 client = Client(API_KEY, API_SECRET)
 
+print("COIN", TARGET_COIN,
+      "DURATION", TARGET_DURATION,
+      "KEEP_LOT", KEEP_LOT,
+      "MIN_LOT", MIN_LOT,
+      "LOOP_SEC", LOOP_SEC
+      )
+
 while(True):
 
     asset_balance = client.get_asset_balance(asset=TARGET_COIN)
