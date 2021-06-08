@@ -18,5 +18,6 @@ DURATION = 90
 # 0 for spending the maximum balance.
 KEEP_LOT = 0
 
-# at least buy X amount of lot in single purchase
-MIN_LOT = 10
+# at least buy X amount of lot in a single purchase
+# 0 for any amount in a single purchase
+MIN_LOT = 0
