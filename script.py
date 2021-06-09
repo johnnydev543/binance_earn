@@ -17,12 +17,13 @@ except:
 API_KEY = config['api']['API_KEY']
 API_SECRET = config['api']['API_SECRET']
 TARGET_COIN = config['target']['COIN']
-TARGET_DURATION = int(config['target']['DURATION'])
+
+# 7, 14, 30, 90, ALL
+TARGET_DURATION = config['target']['DURATION']
 
 # MAX or number
 KEEP_LOT = int(config['target']['KEEP_LOT'])
 
-# at least buy X amount of lot in single purchase
 MIN_LOT = int(config['target']['MIN_LOT'])
 
 LOOP_SEC = int(config['general']['LOOP_SEC'])
@@ -57,7 +58,12 @@ while(True):
             duration = project.get('duration', None)
             lotSize = project.get('lotSize', None)
 
-            if asset == TARGET_COIN and status == 'PURCHASING' and int(duration) == TARGET_DURATION:
+            is_duration_matched = False
+
+            if TARGET_DURATION == int(duration) or TARGET_DURATION == 'ALL':
+                is_duration_matched = True
+
+            if asset == TARGET_COIN and status == 'PURCHASING' and is_duration_matched:
                 lotsPurchased = project.get('lotsPurchased', None)
                 lotsUpLimit = project.get('lotsUpLimit', None)
                 maxLotsPerUser = project.get('maxLotsPerUser', None)
