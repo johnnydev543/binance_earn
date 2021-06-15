@@ -4,6 +4,7 @@ import configparser
 import math
 from datetime import datetime
 from binance.client import Client
+from binance.exceptions import BinanceAPIException
 
 # reads the configuration from settings file
 config = configparser.ConfigParser()
@@ -44,13 +45,17 @@ while(True):
     free_balance = float(free)
 
     if free_balance > 0:
-        print(datetime.now(), '|', TARGET_COIN, free_balance)
 
-        projects = client.get_fixed_activity_project_list(
-                            type='CUSTOMIZED_FIXED',
-                            status='SUBSCRIBABLE',
-                            timestamp=time.time()
-                            )
+        try:
+            projects = client.get_fixed_activity_project_list(
+                                type='CUSTOMIZED_FIXED',
+                                status='SUBSCRIBABLE',
+                                timestamp=time.time()
+                                )
+        except BinanceAPIException as e:
+            print(e)
+        else:
+            print(datetime.now(), '|', TARGET_COIN, free_balance)
 
         for project in projects:
             status = project.get('status', None)
@@ -92,8 +97,13 @@ while(True):
                         'timestamp': time.time()
                     }
 
-                    print("Purchase it!")
-                    purchase = client._request_margin_api('post', 'lending/customizedFixed/purchase',
-                                        True, data=params)
+                    try:
+                        purchase = client._request_margin_api('post', 'lending/customizedFixed/purchase',
+                                            True, data=params)
+                    except BinanceAPIException as e:
+                        print(e)
+                    else:
+                        print("Purchase it!")
+                        print(purchase)
 
     time.sleep(LOOP_SEC)
