@@ -48,10 +48,14 @@ print("COIN", TARGET_COIN,
 
 while(True):
 
-    asset_balance = client.get_asset_balance(asset=TARGET_COIN)
-
-    free = asset_balance.get('free', None)
-    free_balance = float(free)
+    try:
+        asset_balance = client.get_asset_balance(asset=TARGET_COIN)
+    except BinanceAPIException as e:
+        print(e)
+    else:    
+        free = asset_balance.get('free', None)
+        free_balance = float(free)
+        print(datetime.now(), '|', TARGET_COIN, free_balance)
 
     if free_balance > 0:
 
@@ -64,13 +68,10 @@ while(True):
         except BinanceAPIException as e:
             print(e)
         else:
-
             # Sort the duration,
             # the longer duration the higher priority if TARGET_DURATION is set to 0(ALL)
             if TARGET_DURATION == 0:
                 projects.sort(key=key_duration, reverse=True)
-
-            print(datetime.now(), '|', TARGET_COIN, free_balance)
 
         for project in projects:
             status = project.get('status', None)
