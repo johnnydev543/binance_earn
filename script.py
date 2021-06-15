@@ -19,8 +19,8 @@ API_KEY = config['api']['API_KEY']
 API_SECRET = config['api']['API_SECRET']
 TARGET_COIN = config['target']['COIN']
 
-# 7, 14, 30, 90, ALL
-TARGET_DURATION = config['target']['DURATION']
+# 7, 14, 30, 90, 0
+TARGET_DURATION = int(config['target']['DURATION'])
 
 # MAX or number
 KEEP_LOT = int(config['target']['KEEP_LOT'])
@@ -29,6 +29,15 @@ MIN_LOT = int(config['target']['MIN_LOT'])
 
 LOOP_SEC = int(config['general']['LOOP_SEC'])
 client = Client(API_KEY, API_SECRET)
+
+"""
+Used for sort the key of the duration
+"""
+def key_duration(json):
+    try:
+        return int(json['duration'])
+    except KeyError:
+        return 0
 
 print("COIN", TARGET_COIN,
       "DURATION", TARGET_DURATION,
@@ -55,6 +64,12 @@ while(True):
         except BinanceAPIException as e:
             print(e)
         else:
+
+            # Sort the duration,
+            # the longer duration the higher priority if TARGET_DURATION is set to 0(ALL)
+            if TARGET_DURATION == 0:
+                projects.sort(key=key_duration, reverse=True)
+
             print(datetime.now(), '|', TARGET_COIN, free_balance)
 
         for project in projects:
@@ -65,7 +80,7 @@ while(True):
 
             is_duration_matched = False
 
-            if int(TARGET_DURATION) == int(duration) or TARGET_DURATION == 'ALL':
+            if TARGET_DURATION == int(duration) or TARGET_DURATION == 0:
                 is_duration_matched = True
 
             if asset == TARGET_COIN and status == 'PURCHASING' and is_duration_matched:

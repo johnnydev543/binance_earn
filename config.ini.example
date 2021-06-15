@@ -11,14 +11,13 @@ API_SECRET =
 [target]
 COIN = USDT
 
-# locked duration(days) in projects,
-# choose between: 7, 14, 30, 90, ALL
-DURATION = ALL
+# locked duration(days) in projects, 0 for all durations
+# choose between: 7, 14, 30, 90, 0
+DURATION = 0
 
 # The least amount of lot you want to keep in your wallet.
 # 0 for spending the maximum balance.
 KEEP_LOT = 0
 
-# at least buy X amount of lot in a single purchase
-# 0 for any amount in a single purchase
+# at least buy X amount of lot in single purchase
 MIN_LOT = 0
