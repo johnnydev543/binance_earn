@@ -60,7 +60,7 @@ while(True):
 
             is_duration_matched = False
 
-            if TARGET_DURATION == int(duration) or TARGET_DURATION == 'ALL':
+            if int(TARGET_DURATION) == int(duration) or TARGET_DURATION == 'ALL':
                 is_duration_matched = True
 
             if asset == TARGET_COIN and status == 'PURCHASING' and is_duration_matched:
