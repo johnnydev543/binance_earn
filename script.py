@@ -119,7 +119,11 @@ while(True):
                     except BinanceAPIException as e:
                         print(e)
                     else:
-                        print("Purchase it!")
-                        print(purchase)
+                        print("Purchase it!", purchase)
+
+                        if balance_lot == 0:
+                            break
+                        else:
+                            balance_lot = balance_lot - lot
 
     time.sleep(LOOP_SEC)
